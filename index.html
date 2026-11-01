@@ -252,6 +252,32 @@ $("#app").addEventListener("input",e=>{
   if(f==="nb")W.nb=+v;else if(f==="d")W.d=+v;else if(f==="t")W.t=v;else if(f==="u")W.u=v;
 });
 init();setInterval(tick,1000);
-</script>
+// Fonction de validation par lot (ex: 500 agents d'un coup)
+async function validerLotAgents(missionId, nombreAgents) {
+  if (!missionId || !nombreAgents) {
+    alert("Veuillez spécifier une mission et un nombre d'agents.");
+    return;
+  }
+
+  // Sélectionne les X premiers emails de la liste
+  const agentsSelectionnes = listeEmails.slice(0, nombreAgents);
+  
+  const participations = agentsSelectionnes.map(email => ({
+    mission_id: missionId,
+    agent_email: email,
+    statut: 'valide'
+  }));
+
+  const { data, error } = await supabase
+    .from('participations')
+    .insert(participations);
+
+  if (error) {
+    alert("Erreur lors de la validation : " + error.message);
+  } else {
+    alert("Succès ! " + nombreAgents + " agents ont été validés en 1 seul clic.");
+  }
+          }
+      </script>
 </body>
 </html>
